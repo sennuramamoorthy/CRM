@@ -1,86 +1,103 @@
-# Product Requirements Document: Sales CRM with Distributor Portal
+# Product Requirements Document: Import, Inventory & Distribution Platform
 
-| Field        | Value                         |
-|--------------|-------------------------------|
-| Status       | Draft v0.3                    |
-| Last updated | 2026-09-28                    |
-| Owner        | sennuramamoorthy              |
-| Scope        | MVP (Release 1)               |
-| Market       | United States                 |
+| Field        | Value                                          |
+|--------------|------------------------------------------------|
+| Status       | Draft v0.4                                     |
+| Last updated | 2026-09-28                                     |
+| Owner        | sennuramamoorthy                               |
+| Scope        | MVP (Release 1)                                |
+| Market       | Importers selling in the United States and Canada |
 
 ---
 
 ## 1. Summary
 
-A web application for a US business that sells products, including products
-supplied by **independent distributors across the USA**. Three groups of users
-work in it:
+A cloud application (SaaS) for **businesses that import products from India
+and other countries and sell them in the United States and Canada** through a
+network of regional distributors.
 
-1. **Executives** see what's going on across the business (pipeline, revenue,
-   orders, who is dealing with what) and approve large discounts and quotes.
-2. **The sales team** works with customers and deals, then creates **quotes**,
-   turns accepted quotes into **orders**, and bills them with **invoices**.
-3. **Distributors** log in to a separate **Distributor Portal**. There they
-   manage their own products, fulfil their part of each order, and see how
-   their products are selling. They never see other distributors' data, the
-   business's customers, selling prices or margins.
+It covers the whole path of a product:
 
-The app combines a CRM (contacts, companies, deals, tasks), a product catalog
-with type-specific details (food, electronics and more), a quote-to-invoice
-sales flow, and role-based dashboards.
+```
+Overseas supplier ──► Import (PO, shipment, customs, landed cost)
+   ──► Receiving into a warehouse (batch / lot, expiry)
+   ──► Inventory across many locations (company warehouses + distributors)
+   ──► Customer order ──► routed to the location that serves the customer's region
+       and holds the stock ──► shipped from that location's inventory ──► invoiced
+```
+
+Four groups of people use it:
+
+1. **Owners & executives** run the business. They manage imports from overseas
+   suppliers, see stock and money across every location, and approve key
+   decisions.
+2. **Operations / warehouse staff** receive imported goods, record batches and
+   expiry dates, move stock between locations and keep counts accurate.
+3. **Sales** handle customers, quotes, orders and invoices.
+4. **Distributors** in regions across the US and Canada hold stock in their
+   area, fulfil the orders routed to them from their own inventory, and see
+   only their own location, stock and orders.
+
+Each business that signs up gets its own isolated account (tenant).
 
 ## 2. Problem Statement
 
-- **Executives** have no single, current view of the pipeline, revenue, open
-  orders, and which salesperson or distributor is handling what. Answers come
-  from spreadsheets and status meetings.
-- **Sales reps** build quotes and invoices by hand in documents or accounting
-  tools. The result is pricing mistakes, unapproved discounts and no link
-  between a quote and the deal or customer it belongs to.
-- **Distributors** receive orders by email or phone, send product details as
-  attachments, and have no way to confirm, ship or report on orders in one
-  place. The business can't see whether a distributor has acted on an order.
-- Product information (specs, ingredients, allergens, nutrition, weights and
-  dimensions) is scattered, out of date or inconsistent between distributors.
+- **Imports are tracked in email and spreadsheets.** Purchase orders, shipping
+  documents, customs paperwork and ETAs are scattered. The true **landed cost**
+  per unit (product + freight + duty + fees) is rarely known, so pricing and
+  margins are guesses.
+- **Stock is spread across many places**, from company warehouses to
+  distributors' premises in different states and provinces. Nobody knows
+  exactly how much of each product is where.
+- **Batches and expiry dates aren't tracked**, especially for food. Stock
+  expires on shelves, the wrong batch ships first, and a supplier recall can't
+  be traced to the customers who received the affected batch.
+- **Order fulfilment is decided by phone.** Someone has to work out which
+  distributor is closest to the customer and actually has the product, then
+  chase them to ship it.
+- **Executives can't see the whole picture:** goods on the water, stock value
+  by location, stock about to expire, sales by region, and which distributor
+  is performing.
 
 ## 3. Goals & Non-Goals
 
 ### 3.1 Goals (MVP)
-1. **G1: One view of the business for executives.** Dashboards and record
-   ownership show pipeline, revenue, orders, receivables, and who is handling
-   each customer, deal and order.
-2. **G2: Quote to cash in one flow.** Deal → quote → order → invoice with no
-   re-typing, with totals and taxes calculated consistently.
-3. **G3: Controlled discounting.** Quotes above set discount or value limits
-   need executive approval before they can be sent.
-4. **G4: Distributors run their own part.** Distributors keep their product
-   listings current and fulfil their order lines themselves, and the business
-   sees each fulfilment status in real time.
-5. **G5: Strict data separation.** Each distributor sees only its own
-   products, order lines and documents. Customer contact details, selling
-   prices and margins are never shown to distributors.
-6. **G6: Complete product information.** A catalog with categories and
-   type-specific details (technical specs for electronics; ingredients,
-   allergens and nutrition facts for food; weights and dimensions for all).
-7. **G7: Relationship management.** Contacts, companies, deals, tasks and
-   activities stay linked and visible on one timeline.
+1. **G1: Import visibility and landed cost.** Every purchase order and
+   shipment from overseas is tracked from order to warehouse, with documents,
+   ETAs and a calculated landed cost per unit.
+2. **G2: Accurate multi-location inventory.** Real-time stock by product,
+   location and **batch**, with expiry dates, for company warehouses and
+   distributor locations.
+3. **G3: Nothing expires unnoticed; everything is traceable.** Stock is
+   allocated first-expiry-first-out (FEFO), expiry alerts go out in advance,
+   and any batch can be traced from supplier to customer in one click.
+4. **G4: Orders fulfilled from the right place.** Each order is routed
+   automatically to the location that serves the customer's region and has the
+   stock, and staff can override the choice.
+5. **G5: Distributors run their part.** Distributors receive stock transfers,
+   fulfil routed orders from their inventory and report counts in their own
+   portal, seeing only their own data.
+6. **G6: One view for executives.** Dashboards for imports in transit,
+   inventory value and expiry risk, sales by region, and distributor
+   performance.
+7. **G7: Quote to cash.** Customers, quotes, orders and invoices in USD and
+   CAD, linked to the stock that fulfils them.
 
 ### 3.2 Non-Goals (MVP)
-- Collecting payments online (card/ACH). Payments are recorded manually; see
-  Phase 2.
-- Paying distributors (payouts, commissions, settlement). The MVP only tracks
-  the invoices distributors upload.
-- Automatic sales-tax calculation by address (e.g., Avalara/TaxJar). The MVP
-  uses tax rates set by the business.
-- Inventory and stock management, warehouses and purchase orders.
-- Two-way sync with accounting software (e.g., QuickBooks); the MVP offers a
-  CSV export.
-- Distributors selling to their own customers inside the app (see open
-  question 1).
-- Customer self-service portal and e-commerce storefront.
-- Marketing automation, support ticketing, native mobile apps.
-- Generating food labels that comply with labeling laws (the catalog stores
-  the data but does not certify compliance).
+- Filing customs entries directly with US CBP or the CBSA, or FDA prior
+  notice. The app stores filing references, documents and deadlines; a
+  customs broker files them.
+- Live tracking feeds from shipping lines or carriers (entered manually in the
+  MVP; see Phase 2).
+- Carrier rate shopping and shipping-label purchase.
+- Full accounting (general ledger). The MVP provides inventory valuation and
+  exports for the accountant.
+- Online payment collection and automatic sales-tax calculation.
+- Warehouse robotics features: bin/slot optimization, wave picking,
+  handheld-scanner apps (browser barcode scanning is P1).
+- A customer self-service portal or e-commerce storefront.
+- Generating compliant food labels (the data is stored; label compliance is the
+  business's responsibility).
 
 ## 4. Users, Roles & Access
 
@@ -88,441 +105,496 @@ sales flow, and role-based dashboards.
 
 | Group | Who they are | What they come to do |
 |-------|--------------|----------------------|
-| **Executive** | Owner, CEO, VP of Sales, finance lead. | See everything; track performance, workload and receivables; approve discounts, large quotes and distributor products. Rarely creates records. |
-| **Sales** | Sales reps and account managers. | Manage customers and deals, log activities, build quotes, convert them to orders, issue invoices, record payments, follow up. |
-| **Distributor** | Staff of an independent distributor company somewhere in the US. Each distributor company has one or more users. | Manage their own product listings, acknowledge and ship their order lines, upload documents, see their own sales. |
+| **Owner / Executive** | Business owner, directors, finance lead. | Manage overseas suppliers and imports; see stock, sales and money across all locations; approve purchase orders, large adjustments and discounts; manage settings. |
+| **Operations / Warehouse** | Staff at the company's own warehouses (or a 3PL's staff given access). | Receive shipments, record batches and expiry dates, put stock on hold, transfer stock to distributors, pick and ship orders from their warehouse, run stock counts. |
+| **Sales** | Sales reps and account managers. | Manage customers, create quotes and orders, check stock availability, follow up on invoices. |
+| **Distributor** | Staff of an independent distributor responsible for a region of the US or Canada. | Receive stock transferred to them, fulfil orders routed to their location from their own stock, report stock counts and damages, see their performance. |
 
-**Administrator** is a permission added to an Executive or Sales user, not a
-separate group. Administrators manage settings, users, distributor accounts,
-product types, categories and approval limits.
+Permissions that can be added to internal users:
+- **Administrator**: settings, users, locations, territories, distributors.
+- **Import manager**: create and manage purchase orders, shipments and landed
+  cost. Executives have it by default; it can be given to operations staff.
+- **Approver**: approve purchase orders, inventory adjustments and quotes above
+  set limits.
 
 ### 4.2 Personas
 
 | Persona | Description | Key needs |
 |---------|-------------|-----------|
-| **Elena, Executive (CEO)** | Runs a 25-person company selling food and electronics products nationwide. | A dashboard she can read in 2 minutes; spotting stalled deals, late orders and overdue invoices; approving discounts from her phone. |
-| **Marcus, Sales Rep** | Handles 60 customer accounts. | Fast quote building from the catalog, knowing when a quote is approved, seeing whether an order has shipped without calling the distributor. |
-| **Dana, Distributor (Texas)** | Owns a 6-person distribution company that supplies 40 products. | Getting new orders immediately, marking them shipped with tracking, keeping product details current, seeing monthly volume. |
+| **Raj, Owner** | Imports spices, snacks and small appliances from India; sells to grocery stores and retailers in the US and Canada. | Know what's on the water and when it lands; the true landed cost per unit; stock and expiry risk at every location; which regions and distributors perform. |
+| **Maria, Warehouse lead (New Jersey)** | Runs the main warehouse where containers arrive. | Receive a container quickly against its packing list; record batch and expiry for each line; send stock to distributors; know what to pick. |
+| **Kevin, Sales rep** | Manages 80 retail accounts. | See available stock (and its expiry) before quoting; know which location will ship the order and when it ships. |
+| **Dana, Distributor (Texas)** | Covers Texas, Oklahoma and Louisiana from her own storage facility. | See the orders she must ship today; pick the right batch; confirm stock transfers she received; report damaged or expired stock. |
+| **Luc, Distributor (Ontario)** | Covers Ontario and Quebec. | Same as Dana, with Canadian addresses, CAD and bilingual product details. |
 
 ### 4.3 Permission matrix
 
-✅ = full access · 👁 = view only · ✍ = own records only · — = no access
+✅ full · 👁 view · ✍ own location / own records only · — none
 
-| Capability | Executive | Sales | Distributor |
-|------------|:---------:|:-----:|:-----------:|
-| Executive & team dashboards | ✅ | 👁 own + team totals | — |
-| Distributor dashboard | 👁 any distributor | 👁 any distributor | ✍ own |
-| Contacts & companies (customers) | ✅ | ✅ | — |
-| Deals & pipeline | ✅ (can reassign) | ✍ edit own, 👁 all | — |
-| Tasks & activities | ✅ | ✅ | — |
-| Product catalog | ✅ | 👁 | ✍ own products |
-| Create/edit products | ✅ | — (unless Administrator) | ✍ own, needs approval |
-| Approve distributor products | ✅ | — (unless Catalog approver) | — |
-| Product types & categories | ✅ (Administrator) | 👁 | 👁 (to pick from) |
-| Selling price | ✅ | 👁 | — |
-| Distributor supply price | ✅ | 👁 | ✍ own |
-| Margin | ✅ | 👁 | — |
-| Quotes | ✅ | ✍ create/edit own | — |
-| Approve quotes over limits | ✅ | — | — |
-| Sales orders (full) | ✅ | ✍ own, 👁 all | — |
-| Fulfilment orders (distributor's lines) | 👁 | 👁 | ✍ own: acknowledge, ship, reject |
-| Invoices & payments | ✅ | ✍ own | — |
-| Distributor documents (their invoices, certificates) | 👁 | 👁 | ✍ own |
-| Users, distributor accounts, settings | ✅ (Administrator) | — | Distributor admin: own company's users (P1) |
-| Audit log | ✅ | — | — |
+| Capability | Owner / Exec | Operations | Sales | Distributor |
+|------------|:-----------:|:----------:|:-----:|:-----------:|
+| Executive dashboards | ✅ | 👁 inventory only | 👁 own + team totals | — |
+| Overseas suppliers | ✅ | 👁 | — | — |
+| Purchase orders & import shipments | ✅ | 👁 (✅ with Import manager) | 👁 ETA only | — |
+| Purchase cost & landed cost | ✅ | 👁 with Import manager | — | — |
+| Receive shipments into a warehouse | ✅ | ✅ | — | — |
+| Inventory, all locations | ✅ | ✅ | 👁 available qty & expiry | — |
+| Inventory at own location | ✅ | ✅ | 👁 | ✍ view batches & expiry |
+| Stock transfers | ✅ create/approve | ✅ create, ship, receive | — | ✍ receive inbound, request stock |
+| Inventory adjustments (damage, expiry, count) | ✅ approve | ✍ create | — | ✍ request (needs approval) |
+| Batch hold / recall | ✅ | ✅ place hold | 👁 | 👁 holds on own stock |
+| Product catalog | ✅ | 👁 | 👁 | 👁 products they stock |
+| Selling price | ✅ | — | ✅ | — |
+| Customers & CRM | ✅ | 👁 ship-to only | ✅ | — |
+| Quotes | ✅ | — | ✍ own | — |
+| Sales orders | ✅ | 👁 | ✍ own, 👁 all | — |
+| Routing override (change fulfilling location) | ✅ | ✅ | — (requests) | — |
+| Fulfilment orders | ✅ | ✍ own warehouse | 👁 | ✍ own location |
+| Invoices & payments | ✅ | — | ✍ own | — |
+| Users, locations, territories, settings | ✅ (Administrator) | — | — | Distributor admin: own users (P1) |
+| Audit log | ✅ | — | — | — |
 
-### 4.4 What a distributor can see on an order
+### 4.4 What a distributor sees
 
-A distributor sees a **fulfilment order**: only the lines for its own products
-from a sales order.
-
-| Visible to the distributor | Never visible to the distributor |
-|----------------------------|----------------------------------|
-| Fulfilment order number and date | The sales order's number, total, and other lines |
-| Product, SKU, quantity, unit of sale | Other distributors' products or orders |
-| Its own supply price and line total at supply price | Selling price, discount, tax, margin |
-| Ship-to recipient name and delivery address, requested ship-by date, delivery notes | Customer email, phone, company details, deal, quote, invoice, activity history |
-| Status history, tracking information, its own uploaded documents | Internal notes, the salesperson's name (it sees a "sales contact" set by the business instead) |
-
-Ship-to name and address are shown because distributors ship directly to
-customers. See open question 2.
+| Visible | Never visible |
+|---------|---------------|
+| Its own location's stock by product and batch: quantity, expiry, status (available / reserved / on hold) | Other locations' stock, other distributors |
+| Inbound stock transfers to its location | Purchase orders, suppliers, purchase cost, landed cost |
+| Fulfilment orders routed to it: products, quantities, suggested batches, ship-to name and address, delivery notes, ship-by date | Selling prices, order totals, invoices, customer email/phone/account details, quotes, deals |
+| Its product catalog: details, specs, ingredients, allergens, handling and storage instructions | Margins and sales figures of the business as a whole |
+| Its own dashboard: orders shipped, on-time rate, stock on hand, stock near expiry | Internal notes |
 
 ## 5. Core Workflows
 
-### 5.1 Quote to cash
+### 5.1 Import to stock
 ```
-Deal (Sales) ──► Quote (draft)
-                   │ discount or total over limit?
-                   ├─ yes ─► Pending approval ─► Executive approves / rejects (with comment)
-                   ▼
-                 Approved ─► Sent to customer (PDF by email) ─► Accepted / Declined / Expired
-                                                                  │
-                                                     Accepted ─► Sales Order
-                                                                  │ split by product owner
-                        ┌─────────────────────────────────────────┼──────────────────────┐
-                        ▼                                         ▼                      ▼
-             Fulfilment Order (Distributor A)     Fulfilment Order (Distributor B)   In-house lines
-             New → Acknowledged → Shipped → Delivered (or Rejected)                  (fulfilled by staff)
-                        └──────────────── all shipped ─────────────┘
-                                                  ▼
-                                   Invoice (Sales) ─► Sent ─► Paid (payments recorded manually)
+Supplier (India) ──► Purchase Order (Exec / Import manager)
+   ──► Supplier confirms, proforma invoice, advance payment recorded
+   ──► Import Shipment created (one or more POs, sea or air)
+         Booked → Departed (ETD) → In transit → Arrived at port (ETA)
+         → Customs: entry filed → Held / Cleared → Delivered to warehouse
+         Documents attached at each step (commercial invoice, packing list,
+         bill of lading, certificate of origin, FDA / CFIA documents, customs entry)
+   ──► Receiving at warehouse (Operations)
+         count each line against the packing list → record batch / lot,
+         manufacturing date, expiry date, condition → discrepancies flagged
+   ──► Landed cost finalized: freight, insurance, duty, broker and trucking
+       fees allocated to each received batch → cost per unit
+   ──► Stock available (or on QC hold until released)
 ```
 
-### 5.2 Distributor product onboarding
+### 5.2 Distributing stock to regions
 ```
-Distributor creates product (Draft) ─► Submits for review ─► Approver reviews
-   ─► Approved: product goes Active and can be quoted
-   ─► Changes requested: back to distributor with comments
-Edits to an Active product create a pending revision; the live version stays
-unchanged until the revision is approved.
+Warehouse ──► Stock Transfer (batches chosen FEFO) ──► In transit
+   ──► Distributor confirms receipt (quantities per batch; shortages or damages flagged)
+   ──► Stock available at the distributor's location
+Distributor can request stock (replenishment request); Ops / Exec approves and creates the transfer.
+```
+
+### 5.3 Order routing and fulfilment
+```
+Sales Order confirmed (customer ship-to address)
+   ──► Routing engine suggests the fulfilling location(s):
+        1. Locations whose territory covers the ship-to region (state / province / ZIP / postal code)
+        2. …that have enough AVAILABLE stock in batches meeting the minimum
+           remaining shelf life
+        3. Ranked by: same country first → nearest distance → location priority
+        4. If no single location can ship everything:
+           split across locations, OR fall back to the main warehouse, OR backorder
+           (per the business's routing settings)
+   ──► Stock reserved by batch (FEFO) ──► Fulfilment Order sent to the location
+   ──► Location picks (confirms or swaps batch, with a reason) → packs → ships
+       (carrier + tracking) → stock deducted
+   ──► Customer invoiced ──► payment recorded
+Ops / Exec can override the suggested location before the location starts picking.
+```
+
+### 5.4 Recall
+```
+Supplier or regulator reports a problem with a batch
+   ──► Exec / Ops puts the batch ON HOLD everywhere (can't be allocated or shipped)
+   ──► Traceability report: where the batch is now (per location) and which
+       customers received it (orders, quantities, dates, addresses)
+   ──► Distributors are notified to quarantine their stock
+   ──► Stock returned or written off; recall closed with notes
 ```
 
 ## 6. Functional Requirements
 
 Priority: **P0** = must have for MVP, **P1** = should have, **P2** = nice to have.
 
-### 6.1 Authentication, Users & Access
+### 6.1 Accounts, Users & Access
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| AUTH-1 | Sign in with email + password, with email verification and password reset. | P0 |
-| AUTH-2 | Sign in with Google (internal users). | P1 |
-| AUTH-3 | Two-factor authentication (TOTP); required for Executives and Administrators. | P1 |
-| AUTH-4 | Sessions expire after 12 hours of inactivity; distributors after 8 hours. | P0 |
-| USR-1 | Internal users are invited by an Administrator and given a group (Executive or Sales) plus optional permissions (Administrator, Catalog approver). | P0 |
-| USR-2 | An Administrator creates a **distributor account** (company name, address, contact, states served, status) and invites its first user. | P0 |
-| USR-3 | A distributor admin can invite and deactivate users of its own company. | P1 |
-| USR-4 | Deactivating a user or a distributor account signs them out right away and blocks sign-in; their records remain. | P0 |
-| USR-5 | Distributor users sign in to the **Distributor Portal**, a separate area of the app with its own navigation. They can't reach internal pages or data even by editing URLs or calling the API directly. | P0 |
-| USR-6 | Executives can reassign ownership of customers, deals, quotes and orders (e.g., when a rep leaves), singly or in bulk. | P0 |
+| ACC-1 | A business signs up and creates its tenant account (company name, home country US or Canada, base currency USD or CAD, timezone). Each tenant's data is fully isolated. | P0 |
+| ACC-2 | Email + password sign-in with email verification and password reset; Google sign-in for internal users (P1). | P0 |
+| ACC-3 | Two-factor authentication, required for Owners/Executives and Administrators. | P1 |
+| USR-1 | Administrators invite internal users with a group (Executive, Operations, Sales) and optional permissions (Administrator, Import manager, Approver). Operations users are assigned to one or more warehouses. | P0 |
+| USR-2 | Administrators create **distributors** (legal name, contact, address, country) with one or more **locations**, and invite distributor users. | P0 |
+| USR-3 | Distributor users use a separate **Distributor Portal** and can reach only their own locations' data, including through the API. | P0 |
+| USR-4 | Deactivating a user or distributor signs them out right away; records remain. | P0 |
+| USR-5 | Distributor admins manage their own company's users. | P1 |
 
-### 6.2 Contacts & Companies (customers)
-Internal users only.
-
+### 6.2 Overseas Suppliers
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| CON-1 | Contact fields: first/last name, email(s), phone(s), job title, company, address, owner, tags, source, notes. | P0 |
-| CON-2 | Company fields: name, website, industry, size, phone, billing address, shipping addresses (several), payment terms, tax-exempt flag and certificate, owner, tags. | P0 |
-| CON-3 | Many contacts per company; a contact belongs to at most one company. | P0 |
-| CON-4 | List view with search, filters (owner, tag, state, last contacted), sort and pagination. | P0 |
-| CON-5 | Detail page with one timeline: activities, deals, quotes, orders, invoices. | P0 |
-| CON-6 | CSV import with column mapping, preview, validation and duplicate detection (by email / company name); CSV export. | P0 |
-| CON-7 | "Last contacted" date derived from the latest logged activity. | P0 |
-| CON-8 | Custom fields on contacts, companies and deals. | P1 |
-| CON-9 | Merge duplicates; bulk tag, bulk reassign. | P1 |
+| SUP-1 | Supplier record: legal name, country, address, contacts, currency (e.g., INR, USD), payment terms, default Incoterm, bank details (visible to Executives only), notes. | P0 |
+| SUP-2 | Compliance fields: exporter codes (e.g., India IEC), FSSAI licence, FDA food facility registration number, certifications (ISO, HACCP, organic…) with **expiry dates and reminders**. | P0 |
+| SUP-3 | Supplier documents (licences, certificates, contracts) with expiry dates. | P0 |
+| SUP-4 | Products supplied by a supplier with their supplier SKU and last purchase price. | P0 |
+| SUP-5 | Supplier performance: on-time shipment rate, receiving discrepancy rate, quality holds. | P1 |
 
-### 6.3 Deals & Pipeline
+### 6.3 Import Management
+
+#### Purchase orders
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| DEAL-1 | Deal fields: title, company, primary contact, owner, stage, probability, expected close date, value, status (Open / Won / Lost), lost reason. | P0 |
-| DEAL-2 | Kanban board with deal count and value per stage; drag and drop to change stage. | P0 |
-| DEAL-3 | Default stages: Lead → Qualified → Quote Sent → Negotiation → Won / Lost. Administrators can add, rename, reorder and remove stages and set probabilities. | P0 |
-| DEAL-4 | A deal can have several quotes; one is marked **primary**, and the deal value follows the primary quote's total. | P0 |
-| DEAL-5 | When a quote is accepted, its deal is marked Won (it can be undone). | P1 |
-| DEAL-6 | Stage history is recorded for cycle-time and conversion reports. | P0 |
-| DEAL-7 | Board and list views filterable by owner, stage, close date and status. | P0 |
+| PO-1 | Create a purchase order: supplier, currency, exchange rate (rate on the PO date, editable), Incoterm (EXW, FOB, CFR, CIF, DDP…), port of loading, destination (country and warehouse), requested ship date, payment terms, notes. | P0 |
+| PO-2 | Lines: product, quantity in purchase units (e.g., cartons) with the conversion to selling units, unit cost in supplier currency, line total; totals in supplier currency and the base currency. | P0 |
+| PO-3 | Statuses: Draft → Pending approval → Approved → Sent → Confirmed by supplier → Partially shipped → Shipped → Received / Closed / Cancelled. | P0 |
+| PO-4 | Approval required above a set value (Approver or Executive). | P0 |
+| PO-5 | PO PDF to email to the supplier. | P0 |
+| PO-6 | Record supplier payments manually (advance, balance) with date, amount, currency, exchange rate and reference; shows the balance owed. | P0 |
+| PO-7 | Supplier documents per PO: proforma invoice, final commercial invoice. | P0 |
+| PO-8 | Suggested purchase quantities based on stock on hand, stock in transit, sales velocity and lead time. | P2 |
 
-### 6.4 Tasks & Activities
+#### Import shipments
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| TASK-1 | Tasks with title, due date/time, priority, assignee and a linked record (contact, company, deal, quote, order, invoice). | P0 |
-| TASK-2 | "My Tasks" view: Overdue / Today / Upcoming. | P0 |
-| TASK-3 | In-app notifications for due and assigned tasks; optional daily email digest. | P0 / P1 |
-| ACT-1 | Log calls, meetings, emails and notes against records; they appear on every linked record's timeline. | P0 |
-| ACT-2 | @mentions of colleagues in notes, with a notification. | P1 |
+| SHP-1 | Create an import shipment containing lines from one or more POs (and a PO can be split over several shipments). | P0 |
+| SHP-2 | Fields: mode (sea FCL, sea LCL, air, courier), carrier / shipping line, forwarder, customs broker, container number(s) and type, bill of lading or air waybill number, vessel/voyage or flight, port of loading, port of discharge, final destination warehouse, ETD, ETA, actual dates. | P0 |
+| SHP-3 | Statuses with a timeline: Booked → Departed → In transit → Arrived at port → Customs entry filed → Customs hold / Cleared → Out for delivery → Delivered to warehouse → Received. Each change is dated, and users can add notes. | P0 |
+| SHP-4 | **Customs and regulatory** (country-aware): for the US, ISF (10+2) filing reference and deadline (24 hours before loading for ocean), FDA Prior Notice confirmation number for food, CBP entry number and date, duties paid. For Canada, CBSA transaction number, CFIA/SFCR licence reference, duties and GST paid at import. | P0 |
+| SHP-5 | Documents per shipment: commercial invoice, packing list, bill of lading/AWB, certificate of origin, phytosanitary or health certificates, lab/test reports, customs entry summary, delivery order, and others. | P0 |
+| SHP-6 | Reminders for approaching deadlines (ISF filing, arrival, free days at port before demurrage) and alerts when an ETA changes. | P0 |
+| SHP-7 | HS / HTS tariff code per product per destination country, with a duty rate used to estimate duty before the actual customs entry. | P0 |
+| SHP-8 | Tracking link-out to the carrier's website using the container or AWB number. | P1 |
+| SHP-9 | Automatic tracking updates from a container-tracking provider. | P2 |
 
-### 6.5 Products & Catalog
-
-#### Ownership & review
+#### Landed cost
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| OWN-1 | Every product has an owner: **In-house** (the business) or **one distributor**. | P0 |
-| OWN-2 | Distributors can create, edit and archive only their own products; they can't delete a product that has been ordered. | P0 |
-| OWN-3 | Products created by distributors start as **Draft** and must be **submitted for review**. A user with Executive or Catalog approver permission approves them or requests changes, with a comment. | P0 |
-| OWN-4 | Edits to an Active product by a distributor create a **pending revision**. The live version stays unchanged until it is approved. The reviewer sees a side-by-side diff of what changed. | P0 |
-| OWN-5 | The business sets the **selling price**; the distributor sets its **supply price** (what the business pays the distributor). A change to the supply price needs approval like any other edit. | P0 |
-| OWN-6 | The same item supplied by two distributors is two separate products (each with its own SKU and supply price). | P0 |
-| OWN-7 | Notifications: distributors are told when a product is approved or needs changes; approvers are told when something is submitted. | P0 |
+| LC-1 | Add cost lines to a shipment: ocean/air freight, insurance, customs duty, customs broker fees, port and terminal charges, trucking (drayage), inspection fees, demurrage, other. Each has an amount, currency, exchange rate and vendor. Duty can be entered per product line. | P0 |
+| LC-2 | Allocate shared costs to shipment lines by **value, weight, volume or quantity** (chosen per cost line). | P0 |
+| LC-3 | Calculate **landed cost per unit** for each received batch = product cost (converted to base currency) + allocated costs. | P0 |
+| LC-4 | Costs can be estimated before arrival and finalized later. When final costs differ, the batch cost is updated and the change is recorded. | P0 |
+| LC-5 | Landed cost report per shipment and per product over time; margin = selling price − landed cost (internal users with cost permission only). | P0 |
 
-#### Product types
-A **product type** decides which detail fields a product has. Types answer "what
-kind of thing is this?" and categories answer "where does it sit in the
-catalog?". The two are independent.
-
+### 6.4 Receiving
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| PT-1 | Built-in types: **Food**, **Electronics**, **General** (common fields only). They can't be deleted, but fields can be added. | P0 |
-| PT-2 | Administrators can create custom types with their own field definitions (label, data type, unit options, required, help text, display group). | P1 |
-| PT-3 | Types in use can't be deleted, only archived. Changing a product's type keeps the old values hidden, not deleted. | P1 |
+| RCV-1 | Receive a shipment (or a transfer) at a location: for each line, received quantity, **batch / lot number**, supplier's batch number (if different), **manufacturing date**, **expiry / best-before date**, condition (good, damaged, short). One line can be split over several batches. | P0 |
+| RCV-2 | Batch and expiry are **required** for products marked "batch-tracked" (default for food). Expiry can be calculated from manufacturing date + shelf life. | P0 |
+| RCV-3 | Differences from the packing list (shortages, overages, damage) are flagged, can have photos attached, and create a discrepancy record for the supplier or insurer. | P0 |
+| RCV-4 | Received stock can go straight to **Available** or to **QC hold** (per product or per receipt) until released by an authorized user. | P0 |
+| RCV-5 | Partial receipts are allowed; the shipment shows received versus expected. | P0 |
+| RCV-6 | Print batch labels with barcodes (product, batch, expiry). | P1 |
+| RCV-7 | Scan barcodes with a phone or tablet camera during receiving. | P1 |
+| RCV-8 | Receiving a batch that expires within the minimum shelf life (e.g., under 6 months) triggers a warning. | P0 |
 
-#### Categories
+### 6.5 Inventory Management
+
+#### Locations & territories
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| CAT-1 | Administrators create categories as a tree up to 5 levels deep (e.g., *Food › Beverages › Juices*); rename, reorder and move by drag and drop. A category can't be moved under its own descendant. | P0 |
-| CAT-2 | Distributors choose from existing categories and can suggest a new one, which an Administrator creates or declines. | P0 / P1 |
-| CAT-3 | A product has one primary category and may belong to more. | P0 / P1 |
-| CAT-4 | Deleting a category requires moving its products and subcategories elsewhere; products are never deleted with it. | P0 |
-| CAT-5 | Category names are unique among siblings (case-insensitive). | P0 |
+| LOC-1 | Location types: **Company warehouse**, **3PL warehouse**, **Distributor location**. Each has a name, code, address (geocoded), country, timezone, contacts, operating status and fulfilment priority. | P0 |
+| LOC-2 | **Territories**: each location serves a set of regions, defined by US states / Canadian provinces and optionally ZIP / postal code prefixes. Territories may overlap; overlaps are resolved by routing rules. | P0 |
+| LOC-3 | A map view of locations and their territories, highlighting regions nobody serves. | P1 |
+| LOC-4 | Optional sub-locations (zone / aisle / bin) inside warehouses. | P2 |
 
-#### Common product fields
+#### Stock, batches & expiry
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| PRD-1 | Name, SKU (unique across the catalog), type, category, owner (in-house or distributor), short and long description, status (Draft / Pending review / Active / Archived), tags. | P0 |
-| PRD-2 | Pricing: selling price (USD), supply price (distributor products), unit of sale (each, lb, case…), tax category. Margin is calculated and shown to internal users only. | P0 |
-| PRD-3 | Brand, manufacturer, manufacturer part number, GTIN/UPC (check digit validated), country of origin. | P1 |
-| PRD-4 | Up to 10 images (JPEG/PNG/WebP, ≤ 5 MB), one marked primary. | P1 |
-| PRD-5 | Attachments such as datasheets, certificates and safety data sheets (PDF, ≤ 20 MB). | P1 |
+| INVT-1 | Stock is held per **product × location × batch**, with quantity in the base unit and display in cases where configured (e.g., 1 case = 24 units). | P0 |
+| INVT-2 | Stock statuses: **Available**, **Reserved** (allocated to an order or transfer), **In transit**, **On hold** (QC, recall, investigation), **Damaged**, **Expired**. Only Available stock can be allocated. | P0 |
+| INVT-3 | Every change is recorded as an **immutable stock movement** (receipt, transfer out/in, reservation, shipment, adjustment, return, write-off) with who, when, why and reference document. Stock on hand is always rebuildable from movements. | P0 |
+| INVT-4 | Stock can never go negative. Two people can't reserve the same units at the same time. | P0 |
+| INVT-5 | **FEFO**: allocation always suggests the batch that expires first, as long as it meets the order's minimum remaining shelf life. | P0 |
+| INVT-6 | **Expiry alerts** at configurable thresholds (e.g., 90, 60, 30 days) per location, sent to Ops, Execs and the distributor holding the stock. Expired batches automatically become Expired and can't be allocated. | P0 |
+| INVT-7 | **Minimum remaining shelf life** at dispatch: a default per product, overridable per customer (e.g., a grocery chain requires 75% of shelf life remaining). | P1 |
+| INVT-8 | Inventory views: by product (all locations), by location (all products), by batch; filters for status, expiry window and low stock. Export to CSV. | P0 |
+| INVT-9 | **Reorder points** per product per location; low-stock alerts; days of cover based on recent sales. | P1 |
+| INVT-10 | Stock value by location and in total, at landed cost per batch. | P0 |
+
+#### Transfers, adjustments & counts
+| ID | Requirement | Priority |
+|----|-------------|----------|
+| TRF-1 | **Stock transfer** between any two locations (e.g., warehouse → distributor): lines with products and batches (FEFO suggested), statuses Draft → Approved → Shipped (in transit) → Received (full / partial with discrepancies) / Cancelled. Batch identity and expiry travel with the stock. | P0 |
+| TRF-2 | Distributors can send a **replenishment request** for products; Ops or Execs turn it into a transfer or decline it. | P1 |
+| TRF-3 | Cross-border transfers (US ↔ Canada) are flagged as exports/imports requiring customs documents. | P1 |
+| ADJ-1 | **Inventory adjustments** with reason codes (damaged, expired, lost, found, count correction, sample, quality reject). Adjustments above a set quantity or value need approval. Distributors can only request adjustments. | P0 |
+| ADJ-2 | **Stock counts**: count all or selected products at a location (blind count option), compare to the system and post differences as adjustments after review. Distributors can submit counts for their location. | P0 |
+| ADJ-3 | **Batch hold / recall** as in §5.4: hold a batch everywhere, see all locations and customers affected, notify distributors, close with notes. | P0 |
+| ADJ-4 | Customer **returns** (RMA): receive back to a batch as Available, On hold or Damaged, and link to a credit. | P1 |
+
+### 6.6 Product Catalog
+Owned by the business; distributors see the products they stock but don't
+edit them.
+
+#### Structure
+| ID | Requirement | Priority |
+|----|-------------|----------|
+| PRD-1 | Common fields: name, SKU (unique), product type, category, brand, descriptions, status (Draft / Active / Discontinued), tags, images (P1), documents (spec sheets, safety data sheets, certificates) (P1). | P0 |
+| PRD-2 | **Units**: base unit (each), purchase unit (e.g., carton of 48), selling units (e.g., case of 24), with conversions. | P0 |
+| PRD-3 | **Import fields**: country of origin, default supplier(s) and supplier SKU, HS code and duty rate per destination country (US, Canada), shelf life (days), batch-tracked flag, storage requirements (ambient / chilled / frozen). | P0 |
+| PRD-4 | **Pricing**: selling price per currency (USD, CAD) and per price list (P1); last landed cost and average landed cost shown to users with cost permission. | P0 |
+| PRD-5 | **Barcodes**: UPC/EAN/GTIN per unit level (each, case), check-digit validated. | P1 |
+| PRD-6 | **Canada fields**: French product name and description, since bilingual labeling is required for many consumer goods. | P1 |
+| PT-1 | **Product types** decide the detail fields: built-in Food, Electronics, General; custom types defined by Administrators (P1). | P0 |
+| CAT-1 | **Categories** as a tree up to 5 levels deep (e.g., *Food › Spices › Whole Spices*), independent of type; create, rename, reorder, move; deleting a category moves its products elsewhere. | P0 |
 
 #### Weights & dimensions
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| DIM-1 | Product: net weight, length, width, height. | P0 |
-| DIM-2 | Package: gross weight, length, width, height, units per case. | P0 |
-| DIM-3 | Entry in imperial (oz, lb, in, ft) or metric (g, kg, mm, cm, m); stored in base units (g, mm); shown in imperial by default. | P0 |
-| DIM-4 | Net volume for liquids (fl oz, ml, l); calculated package volume. | P1 |
-| DIM-5 | Values must be positive; gross weight below net weight shows a warning. | P0 |
+| DIM-1 | Net weight and dimensions of the product; gross weight and dimensions of each packaging level (case, carton, pallet: units and cases per pallet). | P0 |
+| DIM-2 | Entered in imperial or metric and stored in base units (g, mm). Shown in the unit system of the user's country (US: imperial, Canada: metric). | P0 |
+| DIM-3 | Carton volume (CBM) used for landed cost allocation and container planning. | P0 |
 
 #### Electronics details
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| ELE-1 | Standard fields: model number, power source, voltage (V), power (W), battery capacity (mAh), connectivity (Wi-Fi, Bluetooth, USB-C, Ethernet…), color, warranty (months), certifications (FCC, UL, ETL, Energy Star, RoHS…). | P0 |
-| ELE-2 | Free-form spec table of grouped name–value–unit rows (e.g., "Display": Size = 6.1 in). | P0 |
-| ELE-3 | Copy specs from another product. | P1 |
-| ELE-4 | Side-by-side spec comparison of up to 4 products. | P2 |
+| ELE-1 | Model number, power source, voltage (V), frequency (Hz), power (W), plug type, battery (type, capacity), connectivity, warranty, certifications (FCC, UL/ETL, CSA for Canada, Energy Star, RoHS…). | P0 |
+| ELE-2 | A free-form grouped spec table (group / name / value / unit). | P0 |
+| ELE-3 | Flags for regulated items (e.g., lithium batteries for shipping). | P1 |
 
 #### Food details
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| FOOD-1 | **Ingredients**: an ordered list (descending by weight, as on the label), each with an optional percentage, plus an "ingredients statement" field for text pasted from the label. | P0 |
-| FOOD-2 | **Allergens**: for each of the 9 US major allergens (milk, eggs, fish, crustacean shellfish, tree nuts, peanuts, wheat, soybeans, sesame), mark *Contains*, *May contain* or *Free from*. Additional allergens (e.g., gluten, mustard, celery) can be tracked. Allergens are shown prominently. | P0 |
-| FOOD-3 | **Nutrition facts** in US FDA format: serving size, servings per container, calories, total fat, saturated fat, trans fat, cholesterol, sodium, total carbohydrate, dietary fiber, total sugars, added sugars, protein, vitamin D, calcium, iron, potassium, each with amount and % Daily Value. Per-100 g values can also be stored. | P0 |
-| FOOD-4 | Calculations: % Daily Value from the FDA reference values; per-serving values from per-100 g values and serving size. Calculated values can be overridden. | P1 |
-| FOOD-5 | Dietary labels: vegetarian, vegan, gluten-free, dairy-free, halal, kosher, USDA organic, non-GMO. | P0 |
-| FOOD-6 | Storage and shelf life: storage type (ambient, refrigerated, frozen), temperature range, shelf life, shelf life after opening. | P0 |
-| FOOD-7 | Validation: a sub-nutrient can't exceed its parent (saturated fat ≤ total fat, sugars ≤ carbohydrate, added sugars ≤ total sugars). | P0 |
-| FOOD-8 | A note shows that the product owner is responsible for label accuracy and compliance. | P0 |
+| FOOD-1 | **Ingredients**: ordered list (descending by weight) with optional percentages, plus the label's ingredients statement in English (and French for Canada, P1). | P0 |
+| FOOD-2 | **Allergens**: *Contains* / *May contain* / *Free from* for the US major allergens (milk, eggs, fish, crustacean shellfish, tree nuts, peanuts, wheat, soybeans, sesame) and Canada's priority allergens (adds mustard, sulphites, molluscs and gluten sources). | P0 |
+| FOOD-3 | **Nutrition facts**: US FDA format (serving size, servings per container, calories, fats, cholesterol, sodium, carbohydrate, fiber, sugars, added sugars, protein, vitamin D, calcium, iron, potassium, with % Daily Value). Canadian Nutrition Facts table values stored alongside. | P0 / P1 |
+| FOOD-4 | Validation: sub-nutrients can't exceed their parent (e.g., saturated fat ≤ total fat); % Daily Value calculated from reference values. | P0 |
+| FOOD-5 | Dietary labels (vegetarian, vegan, gluten-free, halal, kosher, organic, non-GMO), storage instructions, shelf life and shelf life after opening. | P0 |
+| FOOD-6 | A note that the business is responsible for the accuracy and compliance of labels. | P0 |
 
-#### Products page
+### 6.7 Customers (CRM)
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| PROD-1 | Table and grid views, with a category tree in a side panel. Internal users see all products; distributors see only their own. | P0 |
-| PROD-2 | Search by name, SKU, UPC and brand; filter by type, category, owner/distributor, status and price. | P0 |
-| PROD-3 | Detail page tabs: Overview, Details (type-specific), Weights & dimensions, Documents, Sales (orders containing it), History. | P0 |
-| PROD-4 | "Pending review" queue for approvers. | P0 |
-| PROD-5 | Duplicate a product; bulk change category, status or tags. | P1 |
-| PROD-6 | CSV import and export per product type (internal users and distributors, each for the products they're allowed to manage). | P1 |
+| CUS-1 | Customer companies and contacts: name, type (retailer, grocery chain, wholesaler, restaurant…), billing address, **multiple ship-to addresses** (geocoded), currency, payment terms, tax status and exemption certificate, minimum shelf-life requirement, sales owner. | P0 |
+| CUS-2 | Customer timeline: activities, quotes, orders, shipments, invoices. | P0 |
+| CUS-3 | Tasks and activities (calls, meetings, notes) with reminders. | P0 |
+| CUS-4 | Deals and pipeline (Kanban) for larger opportunities. | P1 |
+| CUS-5 | CSV import/export. | P0 |
 
-### 6.6 Quotes
+### 6.8 Quotes
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| QUO-1 | Create a quote from a deal or a company: customer, contact, billing and shipping address, payment terms, valid-until date (default 30 days), notes and terms. | P0 |
-| QUO-2 | Line items from the catalog (Active products only): quantity, unit price (defaults to the selling price), discount (% or $), tax rate, line total. Free-text lines are allowed for services or fees. | P0 |
-| QUO-3 | Totals: subtotal, discounts, shipping, sales tax, grand total. Tax rate per quote or per line; tax-exempt customers are charged no tax. | P0 |
-| QUO-4 | Lines keep a snapshot of product name, SKU, price and supply price, so later product edits don't change the quote. | P0 |
-| QUO-5 | Statuses: Draft → Pending approval → Approved → Sent → Accepted / Declined / Expired. Quotes past their valid-until date expire automatically. | P0 |
-| QUO-6 | Approval rules (set by an Administrator): approval is required when any line's discount is over X%, the total discount is over Y%, the margin is under Z%, or the total is over $N. The reason for requiring approval is shown to the approver. | P0 |
-| QUO-7 | Executives approve or reject with a comment; the rep is notified. Editing an approved quote sends it back for approval if it breaks a rule again. | P0 |
-| QUO-8 | Branded PDF (logo, address, terms), emailed from the app to the customer; sending is logged as an activity. | P0 |
-| QUO-9 | Revisions: a revised quote keeps the same number with a suffix (Q-1042-R2), and earlier versions stay viewable. | P1 |
-| QUO-10 | The customer can view and accept the quote online through a secure link. | P2 |
-| QUO-11 | Numbering: configurable prefix and sequence (e.g., Q-2026-0001). | P0 |
+| QUO-1 | Quote for a customer and ship-to address with products, quantities (in selling units), prices, discounts, taxes and totals in the customer's currency. | P0 |
+| QUO-2 | While quoting, sales sees **available stock in the region that serves the ship-to address** and the earliest expiry that would ship. | P0 |
+| QUO-3 | Approval when discounts or margins break set limits; approvers see the reason. | P0 |
+| QUO-4 | Statuses: Draft → Pending approval → Approved → Sent → Accepted / Declined / Expired; PDF by email. | P0 |
+| QUO-5 | Accepting a quote creates a sales order. | P0 |
 
-### 6.7 Orders & Fulfilment
+### 6.9 Order Management & Routing
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| ORD-1 | Marking a quote Accepted creates a **sales order** with the same lines, addresses and totals. Orders can also be created directly. | P0 |
-| ORD-2 | The order is automatically split into one **fulfilment order** per distributor whose products it contains; in-house lines are fulfilled by internal staff. | P0 |
-| ORD-3 | Fulfilment order statuses: New → Acknowledged → Shipped → Delivered, or Rejected (with a required reason) or Cancelled (by the business). | P0 |
-| ORD-4 | Distributors are notified by email and in the portal about new fulfilment orders. The business sets how long they have to acknowledge (e.g., 1 business day); late orders are flagged to the sales owner. | P0 |
-| ORD-5 | When shipping, the distributor enters carrier, tracking number and ship date; the sales owner is notified. | P0 |
-| ORD-6 | A rejected fulfilment order alerts the sales owner, who can cancel the lines or move them to another distributor's equivalent product. | P0 / P1 |
-| ORD-7 | The sales order's status is derived from its parts: Open → Partially shipped → Shipped → Delivered / Cancelled. | P0 |
-| ORD-8 | Partial shipments (some quantity now, the rest later). | P1 |
-| ORD-9 | Distributors can attach documents to a fulfilment order: packing slip, proof of delivery, and **their invoice to the business** (amount, invoice number, date). | P0 |
-| ORD-10 | Internal users see the status of distributor invoices (Received → Approved → Paid) and can change it. | P1 |
-| ORD-11 | Sales can edit or cancel an order until any part of it has shipped; affected distributors are notified. | P0 |
+| ORD-1 | Sales orders from a quote or created directly: customer, ship-to address, requested delivery date, lines, prices, taxes, totals, currency, customer PO number. | P0 |
+| ORD-2 | On confirmation, the **routing engine** suggests fulfilling location(s) using the rules in §5.3: territory coverage of the ship-to region → enough Available stock meeting minimum shelf life → same country → nearest (straight-line distance from geocoded addresses) → location priority. | P0 |
+| ORD-3 | The suggestion is shown with its reason (e.g., "Houston distributor: covers TX, 180 mi away, all 6 lines in stock, earliest expiry 2027-03"). Alternatives are listed with what they lack. | P0 |
+| ORD-4 | Routing settings per business: **auto-assign** or **suggest and confirm**; whether orders may be **split** across locations; fallback location (e.g., main warehouse); whether cross-border fulfilment is allowed (default: no). | P0 |
+| ORD-5 | Operations or Executives can **override** the location, or the batches, before picking starts; the override and its reason are logged. | P0 |
+| ORD-6 | When no location can fulfil a line: backorder it (fulfilled automatically when stock arrives at a serving location), or suggest a transfer to the serving location. | P1 |
+| ORD-7 | Confirmed orders **reserve** stock by batch (FEFO); cancelled or edited orders release it. | P0 |
+| ORD-8 | Each location gets a **fulfilment order** with its lines: statuses New → Acknowledged → Picking → Packed → Shipped → Delivered, or Rejected (with a reason, which re-routes the order). | P0 |
+| ORD-9 | While picking, the location confirms the batch shipped per line; picking a different batch than reserved needs a reason and must still meet shelf-life rules. | P0 |
+| ORD-10 | Shipping records carrier, tracking number, ship date, number of cartons and weight; stock is deducted from the batch on shipment; the customer can be emailed a shipping notification. | P0 |
+| ORD-11 | Acknowledgement and ship-by deadlines per location; overdue fulfilment orders are flagged to Ops and the sales owner. | P0 |
+| ORD-12 | Packing slip and pick list PDFs. | P0 |
+| ORD-13 | The sales order status is derived from its fulfilment orders: Confirmed → Partially shipped → Shipped → Delivered / Cancelled. | P0 |
 
-### 6.8 Invoices & Payments
+### 6.10 Invoices & Payments
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| INV-1 | Create an invoice from a sales order: the whole order, or shipped lines only (P1). Manual invoices are also allowed. | P0 |
-| INV-2 | Invoice fields: number (sequential, never reused), dates, due date from payment terms (Net 15/30/60, due on receipt), bill-to, ship-to, lines, discounts, shipping, tax, total, balance due, notes. | P0 |
-| INV-3 | Statuses: Draft → Sent → Partially paid → Paid, Overdue (automatic after the due date), Void. A sent invoice can't be edited, only voided and reissued. | P0 |
-| INV-4 | Branded PDF, sent by email from the app; the send is logged. | P0 |
-| INV-5 | Record payments by hand: date, amount, method (check, ACH, wire, card), reference. Several partial payments are allowed. | P0 |
-| INV-6 | Automatic reminder emails before and after the due date (schedule configurable). | P1 |
-| INV-7 | Credit notes. | P2 |
-| INV-8 | CSV export of invoices and payments for the accountant. | P1 |
+| INV-1 | Invoice from a sales order (all lines or shipped lines), in the order's currency (USD or CAD). | P0 |
+| INV-2 | Taxes: US sales tax rate per invoice/line (manual, with exemptions); Canada GST/HST and PST/QST by the customer's province. | P0 |
+| INV-3 | Statuses: Draft → Sent → Partially paid → Paid / Overdue / Void; sent invoices can only be voided and reissued; numbers are never reused. | P0 |
+| INV-4 | PDF and email; payments recorded manually (check, ACH, EFT, wire, card) with partial payments. | P0 |
+| INV-5 | Receivables aging report; reminder emails (P1). | P0 |
+| INV-6 | CSV export of invoices, payments and inventory valuation for the accountant. | P1 |
 
-### 6.9 Dashboards & Reports
+### 6.11 Distributor Portal
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| REP-1 | **Executive dashboard**: revenue invoiced and collected (month, quarter, year to date), open pipeline and weighted forecast, quotes awaiting approval, orders by status, overdue invoices and receivables aging (0–30 / 31–60 / 61–90 / 90+ days), top customers, products, categories and distributors. | P0 |
-| REP-2 | **Who is dealing with what**: per sales rep, their open deals, quotes, orders, overdue tasks and last activity; per distributor, open fulfilment orders, late acknowledgements and on-time shipping rate. Click through to the records. | P0 |
-| REP-3 | **Sales dashboard**: my pipeline, my quotes by status, my orders awaiting shipment, my overdue invoices, my tasks today. | P0 |
-| REP-4 | **Distributor dashboard** (portal): new and open fulfilment orders, units shipped and value at supply price by month and product, on-time rate, products pending review. | P0 |
-| REP-5 | Sales performance: win rate, average deal size, cycle time, quote-to-order conversion, by rep and date range. | P0 |
-| REP-6 | Sales by US state (map or table). | P1 |
-| REP-7 | CSV export of any report. | P1 |
+| DP-1 | **Today** view: new fulfilment orders to acknowledge, orders to ship today, overdue orders, inbound transfers, expiring stock. | P0 |
+| DP-2 | **Fulfilment orders**: acknowledge, pick (confirm batches), pack, ship (carrier, tracking), reject (with reason); print pick list and packing slip. | P0 |
+| DP-3 | **My inventory**: stock by product and batch with expiry and status; expiry alerts. | P0 |
+| DP-4 | **Inbound transfers**: see what's coming and when; receive with quantities per batch; report shortages and damage with photos. | P0 |
+| DP-5 | **Adjustments & counts**: request adjustments (damaged, expired…) and submit stock counts for approval. | P0 |
+| DP-6 | **Replenishment requests**. | P1 |
+| DP-7 | **Performance**: orders shipped, on-time acknowledgement and shipping rate, stock accuracy (from counts). | P1 |
+| DP-8 | Works on phones and tablets; barcode scanning with the camera. | P0 / P1 |
 
-### 6.10 Global
+### 6.12 Dashboards & Reports
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| GLB-1 | Global search (Cmd/Ctrl+K) limited to the records the user may see. | P0 |
-| GLB-2 | **Audit log** of sign-ins, approvals, price changes, status changes, ownership changes and exports: who, what, when, old and new values. Executives can view it. | P0 |
-| GLB-3 | In-app notification center; email for important events (approval requests, new fulfilment orders, rejections). | P0 |
-| GLB-4 | Responsive layout; approvals and fulfilment status updates work well on phones. | P0 |
-| GLB-5 | Settings: company profile and logo, address, timezone, number formats, payment terms, tax rates, approval limits, acknowledgement deadline. | P0 |
+| REP-1 | **Executive home**: purchase orders open, shipments in transit with ETA, stock value by location, stock expiring in 30/60/90 days (quantity and value), sales this month by region (state/province) and by distributor, open orders and late fulfilment, receivables overdue. | P0 |
+| REP-2 | **Import report**: shipments by status, delays vs ETA, landed cost per unit by product and shipment, duty and freight as a % of product cost. | P0 |
+| REP-3 | **Inventory reports**: stock on hand by location/product/batch, movement history, aging, expiry risk, write-offs by reason, stock value. | P0 |
+| REP-4 | **Batch traceability**: supplier → PO → shipment → receipt → transfers → customers, for any batch. | P0 |
+| REP-5 | **Distributor performance**: orders fulfilled, on-time rates, rejections, stock accuracy, write-offs, sales volume in their territory. | P0 |
+| REP-6 | **Sales**: by customer, product, category, region, sales rep; margin at landed cost (restricted). | P0 |
+| REP-7 | **Operations**: receipts pending, transfers in transit, fulfilment orders by status and location. | P0 |
+| REP-8 | CSV export of any report. | P1 |
+
+### 6.13 Global
+| ID | Requirement | Priority |
+|----|-------------|----------|
+| GLB-1 | Global search limited to what each user may see. | P0 |
+| GLB-2 | **Audit log** of approvals, stock movements, cost changes, routing overrides, price changes, user changes and exports. | P0 |
+| GLB-3 | Notification center plus email for key events (approvals, new fulfilment orders, ETA changes, expiry alerts, holds). | P0 |
+| GLB-4 | Multi-currency: base currency per business (USD or CAD); supplier currencies (INR, USD, EUR…) on POs; customer currency USD or CAD; exchange rates entered manually or fetched daily (P1). | P0 |
+| GLB-5 | Settings: company profile, currencies, tax rates, approval limits, routing rules, expiry alert thresholds, document numbering. | P0 |
 
 ## 7. Data Model (Conceptual)
 
 ```
-Organization (the business) 1─* User (group: EXECUTIVE | SALES | DISTRIBUTOR; flags: admin, catalog_approver)
-Distributor 1─* User (distributor users), states_served[]
-Company 1─* Contact ; Company 1─* Address
-Pipeline 1─* Stage ; Deal *─1 Stage, *─1 Company, *─1 User(owner) ; Deal 1─* DealStageHistory
-ProductType 1─* FieldDefinition ; Category (parent_id tree)
-Product *─1 ProductType, *─1 Category, *─1 Distributor? (null = in-house)
-        + selling_price, supply_price, weights/dimensions (base units), attributes JSONB
-Product 1─* ProductRevision (pending changes + review status)
-FoodDetails 1─1 Product ; ElectronicsDetails 1─1 Product (spec rows)
-Quote *─1 Deal?, *─1 Company, *─1 User(owner) ; Quote 1─* QuoteLine (product snapshot) ; Quote 1─* Approval
-SalesOrder *─1 Quote? ; SalesOrder 1─* OrderLine
-SalesOrder 1─* FulfilmentOrder *─1 Distributor ; FulfilmentOrder 1─* OrderLine, 1─* Shipment, 1─* Document
-Invoice *─1 SalesOrder? ; Invoice 1─* InvoiceLine ; Invoice 1─* Payment
-Task, Activity (linked to any record), Notification, AuditLogEntry
+Tenant (business) 1─* User (group: EXEC | OPS | SALES | DISTRIBUTOR; permissions)
+Distributor 1─* Location ; Location (type: WAREHOUSE | 3PL | DISTRIBUTOR) 1─* TerritoryRule (country, state/province, postal prefix)
+Supplier 1─* SupplierProduct *─1 Product ; Supplier 1─* PurchaseOrder 1─* POLine
+ImportShipment *─* POLine (via ShipmentLine) ; ImportShipment 1─* CostLine, 1─* ShipmentEvent, 1─* Document
+Receipt *─1 ImportShipment | StockTransfer ; Receipt 1─* ReceiptLine ─► creates Batch
+Batch: product, lot no., supplier lot no., mfg date, expiry date, landed unit cost, origin shipment
+StockBalance: (location, product, batch, status) → quantity        ← derived from StockMovement
+StockMovement: immutable ledger (type, qty, from/to location, batch, reference, user, time)
+StockTransfer 1─* TransferLine (batch) ; Adjustment ; StockCount 1─* CountLine ; Hold/Recall
+Product *─1 ProductType, *─1 Category ; units & conversions ; FoodDetails / ElectronicsDetails ; HsCode per country
+Customer 1─* Contact, 1─* ShipToAddress (geocoded)
+Quote 1─* QuoteLine ; SalesOrder 1─* OrderLine
+SalesOrder 1─* FulfilmentOrder *─1 Location ; FulfilmentOrder 1─* Allocation (order line × batch × qty) ; 1─* Shipment
+Invoice 1─* InvoiceLine, 1─* Payment
+Task, Activity, Notification, AuditLogEntry, ExchangeRate
 ```
 
-Every table carries `organization_id`, so the system can host more than one
-business later. Distributor-owned data also carries `distributor_id`.
-
-**How distributor separation is enforced (defence in depth):**
-1. **Separate portal routes and API.** Distributor sessions can only call
-   `/portal/*` endpoints, and internal endpoints reject them outright.
-2. **Scoped queries.** Every portal query is filtered by the session's
-   `distributor_id` in a shared data-access layer; handlers can't bypass it.
-3. **Response shapes by role.** Portal endpoints return purpose-built response
-   objects (e.g., `FulfilmentOrderForDistributor`) that don't contain selling
-   price, customer contact fields or other lines. Full records are never
-   serialized and then trimmed.
-4. **Postgres Row-Level Security** on distributor-owned tables as a final
-   backstop.
-5. **Automated authorization tests** covering the full permission matrix in
-   §4.3, including cross-distributor access attempts.
-
-**Why product details are modeled this way:** fields that are filtered, sorted
-and reported on (prices, SKU, weights) are real columns. Food and electronics
-details have stable structure and validation rules, so they get typed tables.
-Custom-type fields go in JSONB validated against field definitions. Order and
-quote lines snapshot product data so documents never change after the fact.
+**Key design decisions**
+- **Ledger-based inventory.** Stock balances are derived from an append-only
+  movement ledger, so every quantity is explainable and auditable. Reservations
+  and deductions happen in database transactions with row locks, so stock
+  can't go negative or be double-allocated.
+- **Batch as the unit of truth.** Expiry, landed cost, supplier and origin
+  shipment live on the batch, so FEFO, valuation and recalls all work from the
+  same record.
+- **Routing as a pure, testable function:** `(order, locations, territories,
+  stock, settings) → ranked options with reasons`. It is unit-tested with
+  fixtures and can be changed without touching order code.
+- **Tenant and distributor isolation:** every row has `tenant_id`, and
+  distributor-owned data is scoped by `location_id`/`distributor_id`. This is
+  enforced in a shared data-access layer and backed by Postgres Row-Level
+  Security. The portal API returns distributor-specific shapes without prices,
+  costs or customer contact details.
+- **Money:** integer minor units per currency; the exchange rate used is stored
+  on every foreign-currency document.
 
 ## 8. Non-Functional Requirements
 
 | Area | Requirement |
 |------|-------------|
-| Performance | p95 page load < 1.5 s and p95 API < 300 ms with 50k contacts, 20k products, 100k order lines. |
-| Scale (MVP) | Up to 100 internal users and 500 distributor companies (2,000 distributor users). |
-| Security | HTTPS only; Argon2 password hashing; distributor separation as in §7; OWASP Top 10 mitigations; rate limiting on sign-in; files stored privately with short-lived signed URLs; uploaded files checked for malware and allowed types. |
-| Privacy | US privacy laws (e.g., CCPA/CPRA): export and deletion of personal data on request; customer personal data shown to distributors only where needed to deliver. |
-| Money | Amounts stored as integer cents; rounding rules defined once and shared by quotes, orders and invoices; document numbers never reused. |
-| Availability | 99.5% monthly uptime; daily backups kept 30 days, with point-in-time recovery. |
+| Performance | p95 page load < 1.5 s and p95 API < 300 ms; routing a 50-line order in < 1 s with 100 locations and 20k products. |
+| Inventory integrity | No negative stock or double allocation under concurrent use (tested); balances always equal the sum of movements (daily automated check). |
+| Scale (MVP) | Per tenant: 200 internal users, 300 distributor locations, 20k products, 1M stock movements per year. |
+| Security | HTTPS only, Argon2 passwords, 2FA for executives, tenant and distributor isolation (§7), OWASP Top 10, rate limiting, private file storage with signed URLs, malware checks on uploads. |
+| Privacy | US (CCPA/CPRA) and Canada (PIPEDA; Quebec Law 25) privacy requirements; customer personal data shared with distributors only as needed to deliver. |
+| Data residency | Hosted in North America; Canadian tenants may require Canadian hosting (open question). |
+| Availability | 99.5% monthly; daily backups, 30-day retention, point-in-time recovery. |
+| Offline tolerance | Receiving and picking screens tolerate brief connection drops without losing entered data (P1). |
 | Accessibility | WCAG 2.1 AA for core flows. |
-| Browsers | Latest 2 versions of Chrome, Safari, Firefox and Edge; iOS Safari and Android Chrome for approvals and fulfilment. |
-| Observability | Structured JSON logs with trace IDs; error tracking; timing of API, database and email calls. |
-| Localization | US English, USD, US date format, imperial units by default; times shown in each user's timezone. |
+| Localization | English UI; French product content for Canada; USD/CAD; imperial or metric by country; each user's own timezone. |
+| Observability | Structured JSON logs with trace IDs; error tracking; timing of API, database and external calls. |
 
 ## 9. Recommended Technical Approach
 
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
-| Language | TypeScript end to end | One language, shared types for money and permissions. |
-| Web framework | Next.js (App Router) + React | Internal app and distributor portal as route groups in one deployable, with separate layouts and middleware. |
-| UI | Tailwind CSS + shadcn/ui; dnd-kit (Kanban, category tree); Recharts | Fast to build and accessible. |
-| Database | PostgreSQL | Relational integrity for orders and money, Row-Level Security, full-text search. |
-| ORM / migrations | Prisma (or Drizzle) | Type-safe queries and migrations. |
-| Auth | Auth.js with credentials + Google; TOTP 2FA | Session handling; role and distributor in the session. |
-| Authorization | One policy module (e.g., CASL or hand-written policies) used by every query and action | The permission matrix lives in one tested place. |
-| PDFs | React-PDF or Playwright HTML-to-PDF | Branded quotes and invoices. |
-| Files | S3-compatible storage with signed URLs | Images, documents, PDFs. |
-| Background jobs | pg-boss | Emails, reminders, quote expiry, overdue invoices, late acknowledgements. |
-| Email | Postmark / Resend / SES | Invites, notifications, sending quotes and invoices. |
-| Validation | Zod | Shared client/server schemas. |
-| Testing | Vitest (unit, permission matrix), Playwright (end-to-end for all three roles) | Guards the separation between roles. |
-| Deployment | Docker; Vercel or Fly.io/Render + managed Postgres | Simple operations. |
-| CI | GitHub Actions: lint, typecheck, test, build | Standard. |
+| Language | TypeScript end to end | Shared types for money, units and permissions. |
+| Web | Next.js (App Router) + React | Internal app and Distributor Portal as separate route groups with their own layouts and middleware. |
+| UI | Tailwind CSS + shadcn/ui; TanStack Table; Recharts; MapLibre for location/territory maps | Data-heavy screens, accessible components. |
+| Database | PostgreSQL | Transactions and row locking for stock, Row-Level Security, PostGIS or earthdistance for distance-based routing. |
+| ORM | Prisma (or Drizzle) | Type-safe queries and migrations. |
+| Auth | Auth.js + TOTP 2FA | Sessions carry tenant, group, permissions and locations. |
+| Authorization | One policy module used by every query and action | The permission matrix in one tested place. |
+| Geocoding | Address geocoding at save time (e.g., Mapbox, Google, or Geocodio for US/Canada) with ZIP/postal centroid fallback | Distances for routing. |
+| Barcodes | Browser camera scanning (e.g., ZXing) and label PDFs | Receiving and picking on phones. |
+| PDFs | React-PDF | POs, quotes, invoices, pick lists, packing slips, labels. |
+| Files | S3-compatible storage with signed URLs | Shipping, customs and compliance documents. |
+| Jobs | pg-boss | Expiry checks, reminders, overdue flags, exchange rates, emails. |
+| Testing | Vitest (routing engine, stock ledger, money, permissions), Playwright (end-to-end per user group) | Covers the logic where mistakes cost the most. |
+| Deployment | Docker; managed Postgres in North America | Simple operations. |
 
 ## 10. Success Metrics
 
-| Metric | Target (3 months after launch) |
+| Metric | Target (6 months after launch) |
 |--------|-------------------------------|
-| Quotes created in the app (vs. outside it) | ≥ 90% |
-| Median time from quote request to quote sent | < 1 business day |
-| Median approval turnaround | < 4 business hours |
-| Fulfilment orders acknowledged on time | ≥ 90% |
-| Distributor products with complete details (all required fields) | ≥ 95% |
+| Import shipments tracked in the app | 100% |
+| Received batches with batch number and expiry recorded | 100% for batch-tracked products |
+| Inventory accuracy (system vs. counted) | ≥ 98% |
+| Value of stock written off as expired | 50% lower than before launch |
+| Orders routed automatically without override | ≥ 80% |
+| Fulfilment orders shipped by the ship-by date | ≥ 95% |
+| Time to trace a batch to all affected customers | < 5 minutes |
 | Executives using the dashboard weekly | 100% |
-| Days sales outstanding (DSO) | 10% lower than before launch |
-| Cross-distributor data exposure incidents | 0 |
 
 ## 11. Release Plan / Milestones
 
+Operations first (import → inventory → routing), then selling and billing.
+
 | Milestone | Scope | Est. |
 |-----------|-------|------|
-| M0 – Foundation | Repo, CI, auth, user groups and permissions module, distributor accounts, internal app and portal shells, audit log, design system | 3 wks |
-| M1 – Customers | Contacts, companies, addresses, CSV import/export, timeline | 2 wks |
-| M2 – Catalog | Categories, product types, products, weights & dimensions, food and electronics details, distributor product management and review | 3.5 wks |
-| M3 – Pipeline | Deals, Kanban, tasks, activities, notifications | 2.5 wks |
-| M4 – Quotes | Quote builder, taxes, approval rules and approvals, PDF, email | 2.5 wks |
-| M5 – Orders & Fulfilment | Sales orders, split into fulfilment orders, distributor portal fulfilment, documents | 2.5 wks |
-| M6 – Invoices | Invoices, payments, overdue handling, PDF, email | 2 wks |
-| M7 – Dashboards | Executive, "who's dealing with what", sales, distributor dashboards; reports | 2 wks |
-| M8 – Hardening & Pilot | Permission-matrix test suite, security review, performance, accessibility, pilot with 2–3 distributors | 2 wks |
+| M0 – Foundation | Tenant sign-up, users, groups and permissions, distributors and locations, territories, portal shell, audit log, design system, CI | 3 wks |
+| M1 – Catalog | Products, types, categories, units, weights & dimensions, food and electronics details, HS codes | 3 wks |
+| M2 – Suppliers & Imports | Suppliers, purchase orders and approvals, import shipments, documents, deadlines, landed cost | 3.5 wks |
+| M3 – Receiving & Inventory | Receiving with batches and expiry, stock ledger, statuses, FEFO, expiry alerts, stock views, valuation | 3.5 wks |
+| M4 – Transfers & Control | Stock transfers, distributor receiving, adjustments, counts, holds and recalls, traceability | 2.5 wks |
+| M5 – Customers & Orders | Customers, ship-to geocoding, sales orders, routing engine, reservations, fulfilment orders, distributor portal fulfilment, pick/pack/ship | 4 wks |
+| M6 – Quotes & Invoices | Quotes with regional availability, approvals, invoices, US/Canada taxes, payments, aging | 3 wks |
+| M7 – Dashboards | Executive, import, inventory, distributor and sales reports | 2 wks |
+| M8 – Hardening & Pilot | Concurrency and permission test suites, security review, performance, pilot with one importer and 2–3 distributors | 2.5 wks |
 
-Total ≈ 22 weeks for one small team. A pilot with a few friendly distributors
-before full rollout is strongly recommended.
+Total ≈ 27 weeks for one small team.
 
-**Phase 2 candidates:** online payments (Stripe), automatic sales tax
-(Avalara/TaxJar), QuickBooks/Xero sync, distributor payouts, inventory levels
-reported by distributors, product variants, price lists and customer-specific
-pricing, customer portal and online quote acceptance, email/calendar sync,
-public API and webhooks, mobile app.
+**Phase 2 candidates:** live container and carrier tracking, customs broker
+integration, carrier rate shopping and labels, QuickBooks/Xero sync, online
+payments, automatic sales tax, demand forecasting and purchase suggestions,
+bin locations, native mobile scanning app, customer portal, EDI with grocery
+chains, deals pipeline v2.
 
 ## 12. Risks & Mitigations
 
 | Risk | Mitigation |
 |------|------------|
-| A distributor sees another distributor's or the business's confidential data | The layered enforcement in §7, automated tests for the permission matrix, a security review before the pilot, and an audit log. |
-| Distributors don't adopt the portal and keep using email | Email notifications with one-click links, mobile-friendly acknowledge/ship actions, a short onboarding guide, and pilot feedback before rollout. |
-| Wrong totals or taxes on quotes and invoices | Integer-cent money handling, one shared calculation module with unit tests, snapshots on documents, non-editable sent invoices. |
-| Wrong product data (e.g., allergens) from distributors reaches customers | Review before products go live, pending revisions for edits, validation rules, prominent allergen display, and a note on the owner's responsibility. |
-| Approvals slow down sales | Clear rule reasons, mobile approvals, notifications, and turnaround shown on the dashboard. |
-| Scope creep (payments, tax engines, inventory) | Hold the non-goals; everything else goes to the Phase 2 list. |
+| Inventory numbers drift from reality (especially at distributors) | Ledger-based stock, mandatory batch confirmation on pick, regular counts in the portal, accuracy shown on the distributor dashboard. |
+| Wrong location chosen for an order | Routing reasons shown, suggest-and-confirm mode by default at first, easy override, routing unit tests from real scenarios. |
+| Distributors don't record receipts and shipments promptly | Mobile-friendly portal, email/SMS nudges, acknowledgement deadlines, performance reporting. |
+| Missed customs or compliance deadlines (ISF, prior notice, licence expiry) | Deadline fields with reminders; documents required before status can advance (configurable). |
+| Landed cost wrong because final costs arrive late | Estimated vs. final costs, recalculation with history, flag on shipments with unfinalized costs. |
+| Food safety incident without traceability | Batch required for food, recall workflow, traceability report tested in the pilot. |
+| Data leakage between tenants or distributors | Layered isolation, automated cross-tenant and cross-distributor tests, security review before pilot. |
+| Scope is large | Operations-first milestones; CRM pipeline and advanced features deferred to P1/Phase 2. |
 
 ## 13. Open Questions
 
-1. **Do distributors ever sell directly to their own customers inside this
-   app?** The draft assumes no: the sales team sells, and distributors fulfil
-   and manage their products.
-2. **Delivery details:** is showing the ship-to recipient's name and address
-   to distributors acceptable (needed for direct shipping)? Or do products
-   ship to the business first?
-3. **Who approves distributor products:** Executives only, or also specific
-   sales users (the "Catalog approver" permission)?
-4. **Approval limits:** starting values for max discount %, min margin % and
-   max quote total without approval.
-5. **Territories:** do distributors cover specific states? If two
-   distributors carry the same product, should orders be routed by the ship-to
-   state?
-6. **Distributor payment:** does the business pay distributors per order from
-   their uploaded invoices (as assumed), or on a monthly statement or
-   commission basis?
-7. **Sales tax:** is a manually set rate per quote acceptable for the MVP?
-   In which states does the business collect tax?
-8. **Single business or product:** is this app for your company only, or will
-   it be offered to other businesses (SaaS)? This affects sign-up, billing
-   and hosting.
-9. **Accounting:** which accounting software is used today, and is an
-   integration needed soon after the MVP?
-10. **Products:** besides Food and Electronics, which types should be built in
-    (e.g., clothing, cosmetics, household)? Are variants (sizes, flavors)
-    needed in the MVP?
-11. **Branding and name** of the application.
+1. **Who owns stock held by distributors?** The draft assumes the business
+   still owns it (distributors store it on its behalf, like consignment).
+   If distributors buy the stock, it leaves our inventory on transfer and the
+   model changes.
+2. **How are distributors paid?** A fee per order, a margin, a monthly fee?
+   Should the app calculate it?
+3. **Territories:** are they exclusive (one distributor per state/province), or
+   can several distributors overlap? Are they defined by state/province only,
+   or also by ZIP/postal code?
+4. **Routing:** fully automatic, or suggest-and-confirm by staff? May one order
+   be split across several locations? Are orders ever shipped across the
+   US/Canada border?
+5. **Canada supply:** does stock for Canada arrive directly from India into
+   Canada, or is it moved from US warehouses?
+6. **Company warehouses:** does the business run its own warehouses, use 3PLs,
+   or both? Should 3PL staff log in?
+7. **Who takes customer orders?** Only your sales team, or do distributors also
+   take orders from customers in their region? (Earlier the answer was the
+   sales team.)
+8. **Minimum shelf life:** are there standard rules by customer type (e.g.,
+   grocery chains)?
+9. **Supplier currency:** do you pay Indian suppliers in INR or USD?
+10. **Costing method:** landed cost per batch (specific identification) is
+    assumed. Does your accountant need FIFO or weighted average instead?
+11. **SaaS model:** pricing (per user, per location, per order volume) and
+    whether a free trial is needed.
+12. **Branding and name** of the application.
